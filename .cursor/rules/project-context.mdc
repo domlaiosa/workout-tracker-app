@@ -1,0 +1,23 @@
+---
+description: Project overview and workflow for LiftLog workout tracking app
+alwaysApply: true
+---
+
+# LiftLog — Project Context
+
+## What This Is
+A personal workout tracking web app. React (Vite) frontend, Express/Node.js backend, PostgreSQL database, Drizzle ORM, Tailwind CSS.
+
+## Specs Live in `docs/`
+Before starting any feature, check the relevant spec doc:
+- `docs/README.md` — index of all docs and current phase
+- `docs/01-tech-stack.md` — stack decisions and repo structure
+- `docs/02-database-schema.md` — tables and relationships
+- `docs/03-api-design.md` — REST endpoints
+- `docs/04-ui-home.md` through `docs/07-exercise-library.md` — UI specs
+
+## Rules
+- Stay within the defined stack. Do not introduce new libraries without asking.
+- No auth yet — single-user, local-first for MVP.
+- Mobile-first UI. Test layouts at 375px width.
+- Keep backend routes in `backend/src/routes/`, controllers in `backend/src/controllers/`.

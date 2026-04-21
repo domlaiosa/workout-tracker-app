@@ -1,0 +1,33 @@
+---
+description: React and Tailwind conventions for the LiftLog frontend
+globs: frontend/**/*.jsx
+alwaysApply: false
+---
+
+# Frontend Conventions
+
+## Component Structure
+- Functional components only, no class components.
+- One component per file. File name matches component name (PascalCase).
+- Pages go in `src/pages/`, reusable UI pieces in `src/components/`.
+- Extract logic into custom hooks in `src/hooks/` when a component has more than simple state.
+
+## Platform
+- This app runs in a smartphone browser, used one-handed at the gym. Design for this always.
+- Minimum tap target size: 48px height on all interactive elements.
+- Use `inputMode="numeric"` on all number inputs (weight, reps, rest time) so the numeric keyboard opens on mobile.
+- No hover-only interactions — everything must work by touch.
+- Default viewport target: 390px wide (iPhone-size). Test at this width.
+
+## Tailwind
+- Mobile-first: start with base styles for 390px, use `sm:` / `md:` breakpoints to scale up.
+- No inline `style` props — use Tailwind classes only.
+- Keep className strings readable; split to multiple lines if they exceed ~80 chars.
+
+## Data Fetching
+- All API calls go through utility functions in `src/utils/api.js` — no raw `fetch` calls inside components.
+- Use `useEffect` + local state for now (no external data-fetching library for MVP).
+
+## State
+- React Context for shared state. No Redux or Zustand unless complexity demands it.
+- Keep context providers close to where they're needed — don't dump everything in a root provider.

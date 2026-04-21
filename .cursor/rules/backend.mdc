@@ -1,0 +1,28 @@
+---
+description: Express and database conventions for the LiftLog backend
+globs: backend/**/*.js
+alwaysApply: false
+---
+
+# Backend Conventions
+
+## File Organization
+- Routes define URL paths only — no business logic. Keep handlers thin.
+- Business logic goes in `src/controllers/`.
+- Database queries go in `src/models/` using Drizzle ORM.
+- Shared middleware (error handling, validation) goes in `src/middleware/`.
+
+## Error Handling
+- All async route handlers must be wrapped with try/catch.
+- Return consistent error shapes: `{ error: string, details?: any }`.
+- Use appropriate HTTP status codes — 400 for bad input, 404 for not found, 500 for unexpected.
+
+## Database (Drizzle + PostgreSQL)
+- Define schema in `src/models/schema.js`. Keep all table definitions there.
+- Use Drizzle query builder — no raw SQL strings unless absolutely necessary.
+- Never expose raw DB errors to the client. Log them server-side, return a generic message.
+
+## API Shape
+- Follow the conventions in `docs/03-api-design.md`.
+- All responses are JSON. Successful responses return the resource or `{ success: true }`.
+- No auth middleware yet — single-user MVP, skip authentication layers for now.
