@@ -1,0 +1,32 @@
+---
+description: Keep docs/ in sync with code changes
+globs: 
+alwaysApply: true
+---
+
+# Keep Docs In Sync
+
+After completing any task that changes how the app works, update the relevant spec doc in `docs/` before finishing.
+
+## What Triggers a Doc Update
+
+| Change Made | Doc to Update |
+|-------------|---------------|
+| Schema change (new table, column, relationship) | `docs/02-database-schema.md` |
+| New or changed API endpoint | `docs/03-api-design.md` |
+| UI layout or interaction change | relevant `docs/04` through `docs/07` |
+| New library, tool, or infra decision | `docs/01-tech-stack.md` |
+| New feature idea surfaced during build | `docs/10-future-ideas.md` |
+
+## What to Update
+
+- **Resolved an open decision?** Remove the checkbox and write the decision inline as a fact.
+- **Made a structural change?** Update tables, diagrams, or code blocks to match reality.
+- **Deviated from the spec?** Note what changed and why under an `## As Built` section in that doc.
+- **New open question surfaced?** Add it to the `## Open Decisions` section of the relevant doc.
+
+## What Not to Do
+
+- Do not leave `## Open Decisions` items checked off without recording the actual decision.
+- Do not add a new library to the codebase without updating `docs/01-tech-stack.md`.
+- Do not skip updates because the change feels small — small undocumented decisions compound into confusion.

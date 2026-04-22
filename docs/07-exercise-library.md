@@ -79,7 +79,11 @@ Custom exercises:
 
 ## Open Decisions
 
-- [ ] Whether to store `primary_muscles` as a comma-separated VARCHAR or a Postgres array / JSONB
-- [ ] Final category list — add "Core" as a category, or fold it into other body parts?
-- [ ] How to handle the ~50 exercises that don't map cleanly to a body-part category
 - [ ] Surface `equipment` as a filter in the exercise picker UI, or just show it as metadata?
+
+## As Built
+
+- **`primary_muscles` storage:** Plain `TEXT` column with a comma-separated string (e.g. `"lats, middle back"`). Chosen for simplicity at MVP scale; can migrate to an array/JSONB later if filtering by muscle becomes needed.
+- **Category list:** "Core" is included as a category. Final list: Back, Chest, Shoulders, Arms, Legs, Core, Cardio, Other.
+- **Unmatched exercises:** Default to "Other" category. No manual recategorization done yet.
+- **Seed script:** Located at `backend/src/scripts/seed-exercises.js`. Uses `free-exercise-db` npm package. Run once after first migration.

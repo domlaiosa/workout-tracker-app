@@ -1,6 +1,6 @@
 ---
 description: Express and database conventions for the LiftLog backend
-globs: backend/**/*.js
+globs: backend/**/*.ts
 alwaysApply: false
 ---
 
@@ -18,7 +18,7 @@ alwaysApply: false
 - Use appropriate HTTP status codes — 400 for bad input, 404 for not found, 500 for unexpected.
 
 ## Database (Drizzle + PostgreSQL)
-- Define schema in `src/models/schema.js`. Keep all table definitions there.
+- Define schema in `src/db/schema.ts`. Keep all table definitions there.
 - Use Drizzle query builder — no raw SQL strings unless absolutely necessary.
 - Never expose raw DB errors to the client. Log them server-side, return a generic message.
 

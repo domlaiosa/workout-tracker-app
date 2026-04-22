@@ -1,12 +1,12 @@
-import { Router } from 'express'
+import { Router, type Request, type Response } from 'express'
 import { db } from '../db/index.js'
 import { exercises } from '../db/schema.js'
 import { ilike, eq, and } from 'drizzle-orm'
 
 const router = Router()
 
-router.get('/', async (req, res) => {
-  const { search, category } = req.query
+router.get('/', async (req: Request, res: Response) => {
+  const { search, category } = req.query as { search?: string; category?: string }
 
   const conditions = []
   if (search) conditions.push(ilike(exercises.name, `%${search}%`))
@@ -21,10 +21,17 @@ router.get('/', async (req, res) => {
   res.json(rows)
 })
 
-router.post('/', async (req, res) => {
-  const { name, category, equipment, primaryMuscles } = req.body
+router.post('/', async (req: Request, res: Response) => {
+  const { name, category, equipment, primaryMuscles } = req.body as {
+    name?: string
+    category?: string
+    equipment?: string
+    primaryMuscles?: string
+  }
+
   if (!name || !category) {
-    return res.status(400).json({ error: 'name and category are required' })
+    res.status(400).json({ error: 'name and category are required' })
+    return
   }
 
   const [created] = await db

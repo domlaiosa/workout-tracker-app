@@ -1,9 +1,9 @@
 import 'dotenv/config'
 import { db } from '../db/index.js'
 import { exercises } from '../db/schema.js'
+import type { NewExercise } from '../db/schema.js'
 
-// Category mapping: derive body-part category from primaryMuscles
-const muscleToCategory = {
+const muscleToCategory: Record<string, string> = {
   chest: 'Chest',
   biceps: 'Arms',
   triceps: 'Arms',
@@ -23,19 +23,25 @@ const muscleToCategory = {
   neck: 'Other',
 }
 
-function deriveCategory(exercise) {
-  if (exercise.category === 'cardio') return 'Cardio'
-  const primary = exercise.primaryMuscles?.[0]?.toLowerCase()
-  return muscleToCategory[primary] ?? 'Other'
+interface RawExercise {
+  name: string
+  category: string
+  equipment?: string
+  primaryMuscles?: string[]
 }
 
-async function seed() {
-  // free-exercise-db must be installed: npm install free-exercise-db
-  const { default: data } = await import('free-exercise-db/dist/exercises.json', {
-    assert: { type: 'json' },
-  })
+function deriveCategory(exercise: RawExercise): string {
+  if (exercise.category === 'cardio') return 'Cardio'
+  const primary = exercise.primaryMuscles?.[0]?.toLowerCase()
+  return (primary && muscleToCategory[primary]) ?? 'Other'
+}
 
-  const rows = data.map((ex) => ({
+async function seed(): Promise<void> {
+  const { default: data } = await import('free-exercise-db/dist/exercises.json', {
+    with: { type: 'json' },
+  }) as { default: RawExercise[] }
+
+  const rows: NewExercise[] = data.map((ex) => ({
     name: ex.name,
     category: deriveCategory(ex),
     equipment: ex.equipment ?? null,
@@ -45,14 +51,13 @@ async function seed() {
 
   console.log(`Seeding ${rows.length} exercises...`)
 
-  // Upsert: skip on duplicate name
   await db.insert(exercises).values(rows).onConflictDoNothing()
 
   console.log('Done.')
   process.exit(0)
 }
 
-seed().catch((err) => {
+seed().catch((err: unknown) => {
   console.error(err)
   process.exit(1)
 })

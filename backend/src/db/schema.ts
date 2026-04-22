@@ -38,3 +38,15 @@ export const sets = pgTable('sets', {
   weight: decimal('weight', { precision: 6, scale: 2 }),
   notes: text('notes'),
 })
+
+export type Exercise = typeof exercises.$inferSelect
+export type NewExercise = typeof exercises.$inferInsert
+
+export type Workout = typeof workouts.$inferSelect
+export type NewWorkout = typeof workouts.$inferInsert
+
+export type WorkoutExercise = typeof workoutExercises.$inferSelect
+export type NewWorkoutExercise = typeof workoutExercises.$inferInsert
+
+export type Set = typeof sets.$inferSelect
+export type NewSet = typeof sets.$inferInsert

@@ -1,6 +1,6 @@
 ---
 description: React and Tailwind conventions for the LiftLog frontend
-globs: frontend/**/*.jsx
+globs: frontend/**/*.{tsx,ts}
 alwaysApply: false
 ---
 
@@ -25,7 +25,7 @@ alwaysApply: false
 - Keep className strings readable; split to multiple lines if they exceed ~80 chars.
 
 ## Data Fetching
-- All API calls go through utility functions in `src/utils/api.js` — no raw `fetch` calls inside components.
+- All API calls go through utility functions in `src/utils/api.ts` — no raw `fetch` calls inside components.
 - Use `useEffect` + local state for now (no external data-fetching library for MVP).
 
 ## State

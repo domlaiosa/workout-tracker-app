@@ -32,12 +32,12 @@
 | PATCH | /sets/:id | Update a set (reps, weight, notes) |
 | DELETE | /sets/:id | Remove a set |
 
-### Exercises (Library)
+### Exercises (Library) ✅ Built
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | /exercises | List/search all exercises |
-| POST | /exercises | Create a custom exercise |
+| GET | /exercises | List/search all exercises (supports `?search=` and `?category=` query params) |
+| POST | /exercises | Create a custom exercise (requires `name` and `category` in body) |
 
 ### Templates / History
 
@@ -81,5 +81,10 @@
 ## Open Decisions
 
 - [ ] Pagination approach (offset vs cursor)
-- [ ] Error response format
 - [ ] Whether "compare" data comes embedded or as a separate call
+
+## As Built
+
+- **Error response format:** `{ error: string }` — returned by the global `errorHandler` middleware in `backend/src/middleware/errorHandler.js`. HTTP status comes from `err.status` (falls back to 500).
+- **Base path:** Routes are mounted at `/api/v1/exercises` in `backend/src/index.js`.
+- Only the `/exercises` endpoints are implemented so far. Workout, set, and template routes are not yet built.
