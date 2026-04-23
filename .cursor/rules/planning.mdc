@@ -1,0 +1,49 @@
+# Planning & Implementation Rule
+
+## Default Behavior
+
+Just build it. No planning ceremony required for everyday tasks — small features, quick fixes, single-screen changes, etc. Use good judgment and follow the spec docs in `docs/`.
+
+---
+
+## When a Plan Doc Is Provided
+
+If the user provides a pre-written plan from `docs/plans/` (based on `docs/plans/_template.md`), that document is the spec and is already approved. Skip any plan generation and go straight to implementation.
+
+Follow these rules during and after the build:
+
+### During Implementation
+- Follow the plan exactly — do not add features, refactor unrelated code, or make "while I'm here" changes
+- If something unexpected requires deviating from the plan, stop and describe the deviation before continuing
+- Implement one logical chunk at a time (e.g. backend first, then frontend) so progress is reviewable
+
+### Acceptance Criteria
+- Check off each box in the plan's Acceptance Criteria section as that item is completed
+- Do not update the plan's Status to "Done" until every box is checked
+
+### After Implementation
+- Summarize what was built, file by file
+- Flag any deviations from the plan and explain why
+- List any follow-up tasks or open decisions that came up
+- Update relevant spec docs in `docs/` — see `keep-docs-updated` rule
+
+---
+
+## When the Agent Should Suggest a Plan
+
+If a request arrives without a plan doc and the agent judges it to be large or risky enough to benefit from upfront scoping, it should say so and offer to write a plan first — but this is a suggestion, not a gate. The user decides whether to proceed with or without one.
+
+A plan is worth suggesting when the task involves:
+- Multiple new screens or routes
+- Schema changes
+- New API endpoints
+- Significant refactoring across many files
+
+If the user wants a plan written, the agent produces it using the structure from `docs/plans/_template.md`, then waits for approval before writing any code.
+
+### Open Questions (when generating a plan)
+
+For any unresolved decisions, classify each as:
+
+- **Blocking** — affects schema, changes core behavior, or has no obvious default. Stop and wait for user input.
+- **Low-stakes** — a reasonable default exists. Propose it, state the reasoning, and proceed unless the user objects.
