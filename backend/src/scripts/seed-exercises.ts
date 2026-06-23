@@ -1,63 +1,56 @@
-import 'dotenv/config'
-import { db } from '../db/index.js'
-import { exercises } from '../db/schema.js'
-import type { NewExercise } from '../db/schema.js'
-
-const muscleToCategory: Record<string, string> = {
-  chest: 'Chest',
-  biceps: 'Arms',
-  triceps: 'Arms',
-  forearms: 'Arms',
-  lats: 'Back',
-  'middle back': 'Back',
-  'lower back': 'Back',
-  traps: 'Back',
-  shoulders: 'Shoulders',
-  quadriceps: 'Legs',
-  hamstrings: 'Legs',
-  glutes: 'Legs',
-  calves: 'Legs',
-  abductors: 'Legs',
-  adductors: 'Legs',
-  abdominals: 'Core',
-  neck: 'Other',
-}
+import "dotenv/config";
+import { db } from "../db/index.js";
+import { exerciseLibrary } from "../db/schema.js";
+import type { NewExerciseLibrary } from "../db/schema.js";
 
 interface RawExercise {
-  name: string
-  category: string
-  equipment?: string
-  primaryMuscles?: string[]
-}
-
-function deriveCategory(exercise: RawExercise): string {
-  if (exercise.category === 'cardio') return 'Cardio'
-  const primary = exercise.primaryMuscles?.[0]?.toLowerCase()
-  return (primary && muscleToCategory[primary]) ?? 'Other'
+  id: string;
+  name: string;
+  force?: string;
+  level: string;
+  mechanic?: string;
+  equipment?: string;
+  primaryMuscles: string[];
+  secondaryMuscles?: string[];
+  instructions: string[];
+  category: string;
+  images?: string[];
 }
 
 async function seed(): Promise<void> {
-  const { default: data } = await import('free-exercise-db/dist/exercises.json', {
-    with: { type: 'json' },
-  }) as { default: RawExercise[] }
+  console.log("Fetching exercises from GitHub...");
+  const response = await fetch(
+    "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json"
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to fetch exercises: ${response.statusText}`);
+  }
+  const data = (await response.json()) as RawExercise[];
 
-  const rows: NewExercise[] = data.map((ex) => ({
+  const rows: NewExerciseLibrary[] = data.map((ex) => ({
+    slug: ex.id,
     name: ex.name,
-    category: deriveCategory(ex),
+    force: ex.force ?? null,
+    level: ex.level,
+    mechanic: ex.mechanic ?? null,
     equipment: ex.equipment ?? null,
-    primaryMuscles: ex.primaryMuscles?.join(', ') ?? null,
+    primaryMuscles: ex.primaryMuscles,
+    secondaryMuscles: ex.secondaryMuscles ?? [],
+    instructions: ex.instructions,
+    category: ex.category,
+    images: ex.images ?? [],
     isCustom: false,
-  }))
+  }));
 
-  console.log(`Seeding ${rows.length} exercises...`)
+  console.log(`Seeding ${rows.length} exercises...`);
 
-  await db.insert(exercises).values(rows).onConflictDoNothing()
+  await db.insert(exerciseLibrary).values(rows).onConflictDoNothing();
 
-  console.log('Done.')
-  process.exit(0)
+  console.log("Done.");
+  process.exit(0);
 }
 
 seed().catch((err: unknown) => {
-  console.error(err)
-  process.exit(1)
-})
+  console.error(err);
+  process.exit(1);
+});

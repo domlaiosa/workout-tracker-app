@@ -8,6 +8,8 @@
     "start": "tsx src/index.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx src/scripts/seed-exercises.ts",
+    "db:setup": "npm run db:migrate && npm run db:seed",
     "db:studio": "drizzle-kit studio"
   },
   "keywords": [],

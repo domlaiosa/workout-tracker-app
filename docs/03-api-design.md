@@ -48,6 +48,8 @@
 
 ## Response Shape (example)
 
+`order_index` is 0-based in the API (`0` = first exercise). The UI displays it as 1, 2, 3… (`order_index + 1`).
+
 ```json
 // GET /workouts/:id
 {
@@ -85,6 +87,16 @@
 
 ## As Built
 
-- **Error response format:** `{ error: string }` — returned by the global `errorHandler` middleware in `backend/src/middleware/errorHandler.js`. HTTP status comes from `err.status` (falls back to 500).
-- **Base path:** Routes are mounted at `/api/v1/exercises` in `backend/src/index.js`.
-- Only the `/exercises` endpoints are implemented so far. Workout, set, and template routes are not yet built.
+- **Error response format:** `{ error: string }` — returned by the global `errorHandler` middleware in `backend/src/middleware/errorHandler.js`. HTTP status comes from `err.status` (falls back to 500). Thrown via the `HttpError` helper in `backend/src/lib/httpError.js` (`badRequest` → 400, `notFound` → 404).
+- **Base path:** Routes are mounted at `/api/v1/exercises` and `/api/v1/workouts` in `backend/src/index.js`.
+- **Workouts implemented as a single aggregate resource** (not the granular sub-resource endpoints originally sketched above). A workout is read/written together with its exercises and sets:
+  | Method | Path | Description |
+  |--------|------|-------------|
+  | GET | /workouts | List all workouts (newest first), each with nested exercises + sets |
+  | GET | /workouts/:id | Get one full workout |
+  | POST | /workouts | Create a workout with its exercises + sets (transactional) |
+  | PUT | /workouts/:id | Replace a workout + children (children re-inserted in a transaction) |
+  | DELETE | /workouts/:id | Delete a workout (cascades to exercises + sets) → 204 |
+- **Validation:** request bodies are validated/normalized in `backend/src/validation/workout.js` before any DB write; unknown `exerciseId`s return 400. `user_id` is never accepted from the client (stays null until auth).
+- The exercise library is read-only via `GET /exercises` (used by the picker); the FK from `workout_exercises.exercise_id` blocks deletion of seeded rows.
+- Set/exercise CRUD within a workout is performed by editing the aggregate and re-sending it via `PUT`. The standalone set/exercise/template routes remain unbuilt.

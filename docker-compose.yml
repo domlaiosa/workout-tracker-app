@@ -1,0 +1,32 @@
+# Local development database for the workout tracker.
+# Matches backend/.env: postgres://postgres:password@localhost:5432/workout_fatty
+#
+#   docker compose up -d        # start (creates the named volume on first run)
+#   docker compose down         # stop (data is kept in the volume)
+#   docker compose down -v      # stop AND wipe the database volume
+#
+# After a fresh start, set up the schema + library from ./backend:
+#   npm run db:migrate
+#   npx tsx src/scripts/seed-exercises.ts
+
+services:
+  db:
+    image: postgres:16
+    container_name: workout-fatty-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: workout_fatty
+    ports:
+      - "5432:5432"
+    volumes:
+      - workout_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d workout_fatty"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  workout_pgdata:
